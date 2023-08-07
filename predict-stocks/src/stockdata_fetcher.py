@@ -6,7 +6,7 @@ import pandas as pd
 logger = logging.getLogger(__name__)
 
 
-class StockData:
+class StockDataFetcher:
     def __init__(self, token: str) -> None:
         self.base_url = 'https://api.stockdata.org/v1/data/intraday'
         self.token = token
@@ -37,7 +37,7 @@ if __name__ == '__main__':
 
     TOKEN = os.getenv('STOCKDATA_API_KEY')
 
-    sd = StockData(TOKEN)
+    sd = StockDataFetcher(TOKEN)
     data = sd.get_stock_data('IBM',
                              '2023-08-01')
     print(data.head())

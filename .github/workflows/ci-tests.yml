@@ -1,0 +1,22 @@
+name: CI-Tests
+on:
+  pull_request:
+    branches:
+      - 'main'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python 3.10.9
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.10.9
+
+      - name: Install dependencies
+        run: pip install -r requirements-dev.txt
+
+      - name: Run Unit tests
+        working-directory: "predict-stocks"
+        run: python -m pytest tests/
