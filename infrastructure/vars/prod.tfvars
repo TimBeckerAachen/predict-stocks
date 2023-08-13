@@ -1,0 +1,6 @@
+aws_region = "eu-west-1"
+project_id = "predict-stocks"
+model_bucket = "bucket"
+lambda_function_local_path = "../predict-stocks/src/predict_lambda"
+lambda_function_name = "prediction_lambda"
+owner = "Tim"
