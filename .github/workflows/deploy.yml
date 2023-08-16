@@ -2,7 +2,7 @@ name: CD-Deploy
 on:
   push:
     branches:
-      - 'add-ci'
+      - 'main'
 
 permissions:
     id-token: write
@@ -15,6 +15,12 @@ jobs:
     steps:
       - name: Check out repo
         uses: actions/checkout@v3
+      - name: configure aws credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: arn:aws:iam::1234567890:role/example-role
+          role-session-name: samplerolesession
+          aws-region: ${{ env.AWS_REGION }}
       - name: configure aws credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
