@@ -1,0 +1,39 @@
+name: CD-Deploy
+on:
+  push:
+    branches:
+      - 'main'
+
+permissions:
+    id-token: write
+    contents: read
+
+jobs:
+  build-push-deploy:
+    if: contains('["TimBeckerAachen"]', github.actor)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v3
+      - name: configure aws credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: arn:aws:iam::411847045573:role/github-role-stock-project
+          role-session-name: predict-stocks-deployment
+          aws-region: "eu-west-1"
+      - uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_wrapper: false
+      - name: TF plan
+        id: tf-plan
+        working-directory: 'infrastructure'
+        run: |
+          terraform init -backend-config="key=mlops-zoomcamp-prod.tfstate" -reconfigure && terraform plan -var-file=vars/prod.tfvars
+      - name: TF Apply
+        id: tf-apply
+        working-directory: 'infrastructure'
+        if: ${{ steps.tf-plan.outcome }} == 'success'
+        run: |
+          terraform apply -auto-approve -var-file=vars/prod.tfvars
+          echo "::set-output name=model_bucket::$(terraform output model_bucket | xargs)"
+          echo "::set-output name=lambda_function::$(terraform output lambda_function | xargs)"
