@@ -18,12 +18,6 @@ jobs:
       - name: configure aws credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
-          role-to-assume: arn:aws:iam::1234567890:role/example-role
-          role-session-name: samplerolesession
-          aws-region: ${{ env.AWS_REGION }}
-      - name: configure aws credentials
-        uses: aws-actions/configure-aws-credentials@v2
-        with:
           role-to-assume: arn:aws:iam::411847045573:role/github-role-stock-project
           role-session-name: predict-stocks-deployment
           aws-region: "eu-west-1"
