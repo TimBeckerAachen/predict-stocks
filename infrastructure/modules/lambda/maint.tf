@@ -86,9 +86,45 @@ resource "aws_iam_role_policy_attachment" "lambda_s3" {
   policy_arn = aws_iam_policy.allow_s3.arn
 }
 
-resource "aws_lambda_layer_version" "lambda_layer_prefect" {
-  filename   = var.lambda_layer_local_path
-  layer_name = "lambda_layer_prefect"
+locals {
+  layer_zip_path    = "prefect_layer.zip"
+  layer_name        = "prefect_lambda_layer"
+  requirements_path = "${path.root}../../../requirements-prefect.txt"
+}
+
+resource "null_resource" "prefect_lambda_layer" {
+  triggers = {
+    requirements = filesha1(local.requirements_path)
+  }
+  # the command to install python and dependencies to the machine and zips
+  provisioner "local-exec" {
+    command = <<EOF
+      rm -rf package
+      mkdir package
+      pip install --target package/ -r local.requirements_path
+      zip -r ${local.layer_zip_path} python/
+    EOF
+  }
+}
+
+resource "aws_s3_bucket" "lambda_layer_bucket" {
+  bucket = "lambda-layer-bucket"
+}
+
+resource "aws_s3_object" "lambda_layer_zip" {
+  bucket     = aws_s3_bucket.lambda_layer_bucket.id
+  key        = "lambda_layers/${local.layer_name}/${local.layer_zip_path}"
+  source     = local.layer_zip_path
+  depends_on = [null_resource.prefect_lambda_layer]
+}
+
+resource "aws_lambda_layer_version" "prefect_lambda_layer" {
+  s3_bucket           = aws_s3_bucket.lambda_layer_bucket.id
+  s3_key              = aws_s3_object.lambda_layer_zip.key
+  layer_name          = local.layer_name
+  compatible_runtimes = ["python3.8"]
+  skip_destroy        = false
+  depends_on          = [aws_s3_object.lambda_layer_zip]
 }
 
 data "archive_file" "lambda_function_zip" {
@@ -107,7 +143,7 @@ resource "aws_lambda_function" "predict_lambda" {
   timeout     = 180
 
   filename = data.archive_file.lambda_function_zip.output_path
-  layers = [aws_lambda_layer_version.lambda_layer_prefect.arn]
+  layers = [aws_lambda_layer_version.prefect_lambda_layer.arn]
 
   environment {
     variables = {

@@ -27,16 +27,6 @@ jobs:
           sed -i "s|replace_lambda_path|${{ env.LAMBDA_PATH }}|g" vars/prod.tfvars
           LAMBDA_LAYER_PATH="${{ env.LAMBDA_PATH }}${{ env.LAMBDA_LAYER_ZIP_NAME }}"
           sed -i "s|replace_lambda_layer_path|$LAMBDA_LAYER_PATH|g" vars/prod.tfvars
-      - name: zip lambda layer with prefect requirements
-        working-directory: 'infrastructure'
-        run: |
-          cd ${{ env.LAMBDA_PATH }}
-          mkdir package
-          pip install --target ./package -r ../../../requirements-prefect.txt
-          cd package
-          zip -r ../${{ env.LAMBDA_LAYER_ZIP_NAME }} .
-          cd ..
-          rm -r package
       - name: configure aws credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
