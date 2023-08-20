@@ -33,8 +33,8 @@ module "lambda_function" {
   lambda_function_name = "${var.lambda_function_name}_${var.project_id}"
   model_bucket = module.s3_bucket.name
   lambda_function_local_path = var.lambda_function_local_path
-  PREFECT_API_KEY = var.prefect_api_key
-  PREFECT_API_URL = var.prefect_api_url
+  prefect_api_key = var.prefect_api_key
+  prefect_api_url = var.prefect_api_url
 }
 
 output "lambda_function" {
