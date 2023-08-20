@@ -103,7 +103,7 @@ resource "null_resource" "prefect_lambda_layer" {
       mkdir package
       pip install --target package/ -r local.requirements_path
       zip -r ${local.layer_zip_path} package/
-      rm -rf package
+      ls -lah
     EOF
   }
 }
