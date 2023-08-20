@@ -143,6 +143,7 @@ resource "aws_lambda_function" "predict_lambda" {
   handler     = "index.lambda_handler"
   runtime     = "python3.8"
   timeout     = 180
+  architectures = ["x86_64"]
 
   filename = data.archive_file.lambda_function_zip.output_path
   layers = [aws_lambda_layer_version.prefect_lambda_layer.arn]
