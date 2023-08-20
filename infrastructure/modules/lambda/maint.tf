@@ -86,6 +86,11 @@ resource "aws_iam_role_policy_attachment" "lambda_s3" {
   policy_arn = aws_iam_policy.allow_s3.arn
 }
 
+resource "aws_lambda_layer_version" "lambda_layer_prefect" {
+  filename   = var.lambda_layer_local_path
+  layer_name = "lambda_layer_prefect"
+}
+
 resource "aws_lambda_function" "predict_lambda" {
   function_name = var.lambda_function_name
   role          = aws_iam_role.iam_lambda.arn
@@ -96,6 +101,7 @@ resource "aws_lambda_function" "predict_lambda" {
   timeout     = 180
 
   filename = var.lambda_function_local_path
+  layers = [aws_lambda_layer_version.lambda_layer_prefect.arn]
 
   environment {
     variables = {

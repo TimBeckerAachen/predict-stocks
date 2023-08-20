@@ -10,6 +10,8 @@ permissions:
 
 env:
   LAMBDA_PATH: ../predict-stocks/src/predict_lambda/
+  LAMBDA_ZIP_NAME: lambda_function.zip
+  LAMBDA_LAYER_ZIP_NAME: lambda_layer_prefect.zip
 
 jobs:
   deploy-infra:
@@ -23,8 +25,10 @@ jobs:
         run: |
           sed -i 's|replace_prefect_key|${{ secrets.PREFECT_API_KEY }}|g' vars/prod.tfvars
           sed -i 's|replace_prefect_url|${{ secrets.PREFECT_API_URL }}|g' vars/prod.tfvars
-          REPLACEMENT="${{ env.LAMBDA_PATH }}lambda_function.zip"
-          sed -i "s|replace_lambda_path|$REPLACEMENT|g" vars/prod.tfvars
+          LAMBDA_PATH="${{ env.LAMBDA_PATH }}${{ env.LAMBDA_ZIP_NAME }}"
+          sed -i "s|replace_lambda_path|$LAMBDA_PATH|g" vars/prod.tfvars
+          LAMBDA_LAYER_PATH="${{ env.LAMBDA_PATH }}${{ env.LAMBDA_LAYER_ZIP_NAME }}"
+          sed -i "s|replace_lambda_layer_path|$LAMBDA_PATH|g" vars/prod.tfvars
       - name: zip lambda with requirements
         working-directory: 'infrastructure'
         run: |
@@ -32,9 +36,19 @@ jobs:
           mkdir package
           pip install --target ./package -r ../../../requirements.txt
           cd package
-          zip -r ../lambda_function.zip .
+          zip -r ../${{ env.LAMBDA_ZIP_NAME }} .
           cd ..
-          zip lambda_function.zip index.py
+          zip ${{ env.LAMBDA_ZIP_NAME }} index.py
+          rm -r package
+      - name: zip lambda layer with prefect requirements
+        working-directory: 'infrastructure'
+        run: |
+          cd ${{ env.LAMBDA_PATH }}
+          mkdir package
+          pip install --target ./package -r ../../../requirements-prefect.txt
+          cd package
+          zip -r ../${{ env.LAMBDA_LAYER_ZIP_NAME }} .
+          rm -r package
       - name: configure aws credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:

@@ -17,6 +17,10 @@ variable "lambda_function_local_path" {
   description = ""
 }
 
+variable "lambda_layer_local_path" {
+  description = ""
+}
+
 variable "lambda_function_name" {
   description = ""
 }
