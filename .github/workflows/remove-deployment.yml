@@ -6,10 +6,6 @@ permissions:
     id-token: write
     contents: read
 
-env:
-  LAMBDA_PATH: ../predict-stocks/src/predict_lambda/
-  LAMBDA_LAYER_ZIP_NAME: lambda_layer_prefect.zip
-
 jobs:
   remove-infra:
     if: contains('["TimBeckerAachen"]', github.actor)
@@ -17,12 +13,6 @@ jobs:
     steps:
       - name: Check out repo
         uses: actions/checkout@v3
-      - name: Set lambda path in vars file
-        working-directory: 'infrastructure'
-        run: |
-          sed -i "s|replace_lambda_path|${{ env.LAMBDA_PATH }}|g" vars/prod.tfvars
-          LAMBDA_LAYER_PATH="${{ env.LAMBDA_PATH }}${{ env.LAMBDA_LAYER_ZIP_NAME }}"
-          sed -i "s|replace_lambda_layer_path|$LAMBDA_LAYER_PATH|g" vars/prod.tfvars
       - name: configure aws credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:

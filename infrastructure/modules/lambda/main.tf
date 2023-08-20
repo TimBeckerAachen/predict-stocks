@@ -86,67 +86,14 @@ resource "aws_iam_role_policy_attachment" "lambda_s3" {
   policy_arn = aws_iam_policy.allow_s3.arn
 }
 
-locals {
-  layer_zip_path    = "prefect_layer.zip"
-  layer_name        = "prefect_lambda_layer"
-  requirements_path = "${path.module}/../../../requirements-prefect.txt"
-}
-
-resource "null_resource" "prefect_lambda_layer" {
-  triggers = {
-    requirements = filesha1(local.requirements_path)
-  }
-  provisioner "local-exec" {
-    command = <<EOT
-      pwd
-      ls
-      rm -rf python
-      mkdir python
-      pip install --target python/ -r ${local.requirements_path}
-      zip -r ${local.layer_zip_path} python/
-    EOT
-  }
-}
-
-resource "aws_s3_bucket" "lambda_layer_bucket" {
-  bucket = "lambda-layer-bucket-${var.project_id}"
-  force_destroy = true
-}
-
-resource "aws_s3_object" "lambda_layer_zip" {
-  bucket     = aws_s3_bucket.lambda_layer_bucket.id
-  key        = "lambda_layers/${local.layer_name}/${local.layer_zip_path}"
-  source     = local.layer_zip_path
-  depends_on = [null_resource.prefect_lambda_layer]
-}
-
-resource "aws_lambda_layer_version" "prefect_lambda_layer" {
-  s3_bucket           = aws_s3_bucket.lambda_layer_bucket.id
-  s3_key              = aws_s3_object.lambda_layer_zip.key
-  layer_name          = local.layer_name
-  compatible_runtimes = ["python3.9"]
-  skip_destroy        = false
-  depends_on          = [aws_s3_object.lambda_layer_zip]
-}
-
-data "archive_file" "lambda_function_zip" {
-  type = "zip"
-  source_file = "${var.lambda_function_local_path}/index.py"
-  output_path = "lambda_function.zip"
-}
-
 resource "aws_lambda_function" "predict_lambda" {
   function_name = var.lambda_function_name
   role          = aws_iam_role.iam_lambda.arn
 
   description = "lambda for making predictions"
-  handler     = "index.lambda_handler"
-  runtime     = "python3.9"
+  image_uri = var.image_uri
+  package_type = "Image"
   timeout     = 180
-  architectures = ["x86_64"]
-
-  filename = data.archive_file.lambda_function_zip.output_path
-  layers = [aws_lambda_layer_version.prefect_lambda_layer.arn]
 
   environment {
     variables = {

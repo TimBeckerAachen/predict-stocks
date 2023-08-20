@@ -8,10 +8,6 @@ permissions:
     id-token: write
     contents: read
 
-env:
-  LAMBDA_PATH: ../predict-stocks/src/predict_lambda/
-  LAMBDA_LAYER_ZIP_NAME: lambda_layer_prefect.zip
-
 jobs:
   deploy-infra:
     if: contains('["TimBeckerAachen"]', github.actor)
@@ -24,9 +20,6 @@ jobs:
         run: |
           sed -i 's|replace_prefect_key|${{ secrets.PREFECT_API_KEY }}|g' vars/prod.tfvars
           sed -i 's|replace_prefect_url|${{ secrets.PREFECT_API_URL }}|g' vars/prod.tfvars
-          sed -i "s|replace_lambda_path|${{ env.LAMBDA_PATH }}|g" vars/prod.tfvars
-          LAMBDA_LAYER_PATH="${{ env.LAMBDA_PATH }}${{ env.LAMBDA_LAYER_ZIP_NAME }}"
-          sed -i "s|replace_lambda_layer_path|$LAMBDA_LAYER_PATH|g" vars/prod.tfvars
       - name: configure aws credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:

@@ -30,13 +30,20 @@ module "s3_bucket" {
 
 module "lambda_function" {
   source = "./modules/lambda"
+  image_uri = module.ecr_image.image_uri
   lambda_function_name = "${var.lambda_function_name}_${var.project_id}"
   model_bucket = module.s3_bucket.name
-  lambda_function_local_path = var.lambda_function_local_path
-  lambda_layer_local_path = var.lambda_layer_local_path
   prefect_api_key = var.prefect_api_key
   prefect_api_url = var.prefect_api_url
-  project_id = var.project_id
+}
+
+module "ecr_image" {
+   source = "./modules/ecr"
+   ecr_repo_name = "${var.ecr_repo_name}_${var.project_id}"
+   account_id = local.account_id
+   lambda_function_local_path = var.lambda_function_local_path
+   docker_image_local_path = var.docker_image_local_path
+   region = var.aws_region
 }
 
 output "lambda_function" {

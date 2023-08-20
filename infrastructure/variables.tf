@@ -17,10 +17,6 @@ variable "lambda_function_local_path" {
   description = ""
 }
 
-variable "lambda_layer_local_path" {
-  description = ""
-}
-
 variable "lambda_function_name" {
   description = ""
 }
@@ -35,4 +31,12 @@ variable "prefect_api_key" {
 
 variable "owner" {
   description = "name of who maintains the project"
+}
+
+variable "docker_image_local_path" {
+  description = ""
+}
+
+variable "ecr_repo_name" {
+  description = ""
 }
