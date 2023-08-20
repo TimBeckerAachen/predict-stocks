@@ -124,7 +124,7 @@ resource "aws_lambda_layer_version" "prefect_lambda_layer" {
   s3_bucket           = aws_s3_bucket.lambda_layer_bucket.id
   s3_key              = aws_s3_object.lambda_layer_zip.key
   layer_name          = local.layer_name
-  compatible_runtimes = ["python3.8"]
+  compatible_runtimes = ["python3.9"]
   skip_destroy        = false
   depends_on          = [aws_s3_object.lambda_layer_zip]
 }
@@ -141,7 +141,7 @@ resource "aws_lambda_function" "predict_lambda" {
 
   description = "lambda for making predictions"
   handler     = "index.lambda_handler"
-  runtime     = "python3.8"
+  runtime     = "python3.9"
   timeout     = 180
   architectures = ["x86_64"]
 
