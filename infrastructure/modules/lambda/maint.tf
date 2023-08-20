@@ -101,7 +101,7 @@ resource "aws_lambda_function" "predict_lambda" {
   timeout     = 180
 
   filename = var.lambda_function_local_path
-  layers = [aws_lambda_layer_version.lambda_layer_prefect.arn]
+#  layers = [aws_lambda_layer_version.lambda_layer_prefect.arn]
 
   environment {
     variables = {
