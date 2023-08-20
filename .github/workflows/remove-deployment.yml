@@ -19,7 +19,7 @@ jobs:
       - name: Set lambda path in vars file
         working-directory: 'infrastructure'
         run: |
-          sed -i 's\replace_lambda_path\${{ env.LAMBDA_PATH }}lambda_function.zip\g' vars/prod.tfvars
+          sed -i 's|replace_lambda_path|${{ env.LAMBDA_PATH }}lambda_function.zip|g' vars/prod.tfvars
       - name: configure aws credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:

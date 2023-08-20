@@ -23,7 +23,7 @@ jobs:
         run: |
           sed -i 's/replace_prefect_key/${{ secrets.PREFECT_API_KEY }}/g' vars/prod.tfvars \
           sed -i 's/replace_prefect_url/${{ secrets.PREFECT_API_URL }}/g' vars/prod.tfvars \
-          sed -i 's\replace_lambda_path\${{ env.LAMBDA_PATH }}lambda_function.zip\g' vars/prod.tfvars
+          sed -i 's|replace_lambda_path|${{ env.LAMBDA_PATH }}lambda_function.zip|g' vars/prod.tfvars
       - name: zip lambda with requirements
         working-directory: 'infrastructure'
         run: |
