@@ -86,12 +86,6 @@ resource "aws_iam_role_policy_attachment" "lambda_s3" {
   policy_arn = aws_iam_policy.allow_s3.arn
 }
 
-data "archive_file" "lambda_function_zip" {
-  type = "zip"
-  source_file = "${var.lambda_function_local_path}/index.py"
-  output_path = "lambda_function.zip"
-}
-
 resource "aws_lambda_function" "predict_lambda" {
   function_name = var.lambda_function_name
   role          = aws_iam_role.iam_lambda.arn
@@ -101,11 +95,14 @@ resource "aws_lambda_function" "predict_lambda" {
   runtime     = "python3.8"
   timeout     = 180
 
-  filename = data.archive_file.lambda_function_zip.output_path
+  filename = var.lambda_function_local_path
 
   environment {
     variables = {
       MODEL_BUCKET = var.model_bucket
+      PREFECT_HOME = "/tmp/.prefect"
+      PREFECT_API_KEY = var.prefect_api_key
+      PREFECT_API_URL = var.prefect_api_url
     }
   }
 

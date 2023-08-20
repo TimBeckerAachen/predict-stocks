@@ -20,6 +20,15 @@ variable "lambda_function_local_path" {
 variable "lambda_function_name" {
   description = ""
 }
+
+variable "prefect_api_url" {
+  description = ""
+}
+
+variable "prefect_api_key" {
+  description = ""
+}
+
 variable "owner" {
   description = "name of who maintains the project"
 }

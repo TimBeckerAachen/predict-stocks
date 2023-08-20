@@ -8,6 +8,9 @@ permissions:
     id-token: write
     contents: read
 
+env:
+  LAMBDA_PATH: ../predict-stocks/src/predict_lambda/"
+
 jobs:
   deploy-infra:
     if: contains('["TimBeckerAachen"]', github.actor)
@@ -15,6 +18,22 @@ jobs:
     steps:
       - name: Check out repo
         uses: actions/checkout@v3
+      - name: Set Prefect credentials and lambda path in vars file
+        working-directory: 'infrastructure'
+        run: |
+          sed -i 's/replace_prefect_key/${{ secrets.PREFECT_API_KEY }}/g' vars/prod.tfvars \
+          sed -i 's/replace_prefect_url/${{ secrets.PREFECT_API_URL }}/g' vars/prod.tfvars \
+          sed -i 's/replace_lambda_path/${{ env.LAMBDA_PATH }}lambda_function.zip/g' vars/prod.tfvars
+      - name: zip lambda with requirements
+        working-directory: 'infrastructure'
+        run: |
+          cd ${{ env.LAMBDA_PATH }} \
+          mkdir package \
+          pip install --target ./package -r ../../../requirements.txt \
+          cd package \
+          zip -r ../lambda_function.zip . \
+          cd .. \
+          zip lambda_function.zip index.py
       - name: configure aws credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
@@ -28,7 +47,7 @@ jobs:
         id: tf-plan
         working-directory: 'infrastructure'
         run: |
-          terraform init -backend-config="key=mlops-zoomcamp-prod.tfstate" -reconfigure && terraform plan -var-file=vars/prod.tfvars
+          terraform init -backend-config="key=predict-stocks-prod.tfstate" -reconfigure
       - name: TF Apply
         id: tf-apply
         working-directory: 'infrastructure'

@@ -4,11 +4,19 @@
 """
 
 import json
+from prefect import flow, get_run_logger
 
 
-def lambda_handler(event, context):
+@flow(name='demo')
+def fct():
+    logger = get_run_logger()
+    logger.warning('test')
     return {
         'statusCode': 200,
         'body': json.dumps('Hello from Lambda!')
     }
+
+
+def lambda_handler(event, context):
+    return fct()
 
