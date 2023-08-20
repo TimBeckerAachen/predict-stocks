@@ -100,10 +100,10 @@ resource "null_resource" "prefect_lambda_layer" {
     command = <<EOT
       pwd
       ls
-      rm -rf package
-      mkdir package
-      pip install --target package/ -r ${local.requirements_path}
-      zip -r ${local.layer_zip_path} package/
+      rm -rf python
+      mkdir python
+      pip install --target python/ -r ${local.requirements_path}
+      zip -r ${local.layer_zip_path} python/
     EOT
   }
 }
