@@ -89,7 +89,7 @@ resource "aws_iam_role_policy_attachment" "lambda_s3" {
 locals {
   layer_zip_path    = "prefect_layer.zip"
   layer_name        = "prefect_lambda_layer"
-  requirements_path = "${path.root}/../../../requirements-prefect.txt"
+  requirements_path = "${path.module}/../../../requirements-prefect.txt"
 }
 
 resource "null_resource" "prefect_lambda_layer" {
