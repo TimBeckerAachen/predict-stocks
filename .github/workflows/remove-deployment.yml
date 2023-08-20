@@ -8,6 +8,7 @@ permissions:
 
 env:
   LAMBDA_PATH: ../predict-stocks/src/predict_lambda/
+  LAMBDA_LAYER_ZIP_NAME: lambda_layer_prefect.zip
 
 jobs:
   remove-infra:
@@ -19,8 +20,7 @@ jobs:
       - name: Set lambda path in vars file
         working-directory: 'infrastructure'
         run: |
-          LAMBDA_PATH="${{ env.LAMBDA_PATH }}${{ env.LAMBDA_ZIP_NAME }}"
-          sed -i "s|replace_lambda_path|$LAMBDA_PATH|g" vars/prod.tfvars
+          sed -i "s|replace_lambda_path|${{ env.LAMBDA_PATH }}|g" vars/prod.tfvars
           LAMBDA_LAYER_PATH="${{ env.LAMBDA_PATH }}${{ env.LAMBDA_LAYER_ZIP_NAME }}"
           sed -i "s|replace_lambda_layer_path|$LAMBDA_PATH|g" vars/prod.tfvars
       - name: configure aws credentials

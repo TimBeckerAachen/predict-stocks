@@ -91,6 +91,12 @@ resource "aws_lambda_layer_version" "lambda_layer_prefect" {
   layer_name = "lambda_layer_prefect"
 }
 
+data "archive_file" "lambda_function_zip" {
+  type = "zip"
+  source_file = "${var.lambda_function_local_path}/index.py"
+  output_path = "lambda_function.zip"
+}
+
 resource "aws_lambda_function" "predict_lambda" {
   function_name = var.lambda_function_name
   role          = aws_iam_role.iam_lambda.arn
@@ -100,7 +106,7 @@ resource "aws_lambda_function" "predict_lambda" {
   runtime     = "python3.8"
   timeout     = 180
 
-  filename = var.lambda_function_local_path
+  filename = data.archive_file.lambda_function_zip.output_path
   layers = [aws_lambda_layer_version.lambda_layer_prefect.arn]
 
   environment {
