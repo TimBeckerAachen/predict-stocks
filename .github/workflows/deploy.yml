@@ -26,7 +26,7 @@ jobs:
           sed -i 's|replace_prefect_url|${{ secrets.PREFECT_API_URL }}|g' vars/prod.tfvars
           sed -i "s|replace_lambda_path|${{ env.LAMBDA_PATH }}|g" vars/prod.tfvars
           LAMBDA_LAYER_PATH="${{ env.LAMBDA_PATH }}${{ env.LAMBDA_LAYER_ZIP_NAME }}"
-          sed -i "s|replace_lambda_layer_path|$LAMBDA_PATH|g" vars/prod.tfvars
+          sed -i "s|replace_lambda_layer_path|$LAMBDA_LAYER_PATH|g" vars/prod.tfvars
       - name: zip lambda layer with prefect requirements
         working-directory: 'infrastructure'
         run: |
