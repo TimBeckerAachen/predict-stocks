@@ -109,7 +109,8 @@ resource "null_resource" "prefect_lambda_layer" {
 }
 
 resource "aws_s3_bucket" "lambda_layer_bucket" {
-  bucket = "lambda-layer-bucket"
+  bucket = "lambda-layer-bucket-${var.project_id}"
+  force_destroy = true
 }
 
 resource "aws_s3_object" "lambda_layer_zip" {

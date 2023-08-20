@@ -36,6 +36,7 @@ module "lambda_function" {
   lambda_layer_local_path = var.lambda_layer_local_path
   prefect_api_key = var.prefect_api_key
   prefect_api_url = var.prefect_api_url
+  project_id = var.project_id
 }
 
 output "lambda_function" {

@@ -22,3 +22,7 @@ variable "prefect_api_url" {
 variable "prefect_api_key" {
   description = ""
 }
+
+variable "project_id" {
+  description = ""
+}
