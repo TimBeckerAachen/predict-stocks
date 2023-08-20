@@ -89,7 +89,7 @@ resource "aws_iam_role_policy_attachment" "lambda_s3" {
 locals {
   layer_zip_path    = "prefect_layer.zip"
   layer_name        = "prefect_lambda_layer"
-  requirements_path = "${path.module}../../../requirements-prefect.txt"
+  requirements_path = "${path.root}../../../requirements-prefect.txt"
 }
 
 resource "null_resource" "prefect_lambda_layer" {
@@ -97,13 +97,13 @@ resource "null_resource" "prefect_lambda_layer" {
     requirements = filesha1(local.requirements_path)
   }
   provisioner "local-exec" {
-    command = <<EOF
+    command = <<EOT
       rm -rf package
       mkdir package
       pip install --target package/ -r local.requirements_path
       zip -r ${local.layer_zip_path} package/
       ls -lah
-    EOF
+    EOT
   }
 }
 
