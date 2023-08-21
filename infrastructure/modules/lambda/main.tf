@@ -113,7 +113,8 @@ resource "aws_lambda_function" "predict_lambda" {
   description = "lambda for making predictions"
   image_uri = var.image_uri
   package_type = "Image"
-  timeout     = 180
+  timeout     = 240
+  memory_size = 1024
 
   environment {
     variables = {
