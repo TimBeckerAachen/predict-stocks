@@ -8,6 +8,11 @@ from sklearn.metrics import mean_squared_error
 from DataFetcher import DataFetcher
 
 
+mlflow.set_tracking_uri("http://0.0.0.0:5000")
+mlflow.set_experiment('stock-prediction')
+mlflow.sklearn.autolog()
+
+
 def preprocess_data(prices: np.array) -> Tuple[np.array, np.array]:
     """
     Preprocesses the data to create feature and target sets.
@@ -50,6 +55,7 @@ def train_model(X: np.array, y: np.array) -> None:
         mlflow.log_param("random_state", 0)
 
         mlflow.sklearn.log_model(rf, "model")
+    print('model trained')
 
 
 def train():
