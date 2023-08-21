@@ -18,3 +18,7 @@ variable "prefect_api_key" {
 variable "image_uri" {
   description = ""
 }
+
+variable "lambda_schedule" {
+  description = ""
+}

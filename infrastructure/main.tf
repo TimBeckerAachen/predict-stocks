@@ -32,6 +32,7 @@ module "lambda_function" {
   source = "./modules/lambda"
   image_uri = module.ecr_image.image_uri
   lambda_function_name = "${var.lambda_function_name}_${var.project_id}"
+  lambda_schedule = var.lambda_schedule
   model_bucket = module.s3_bucket.name
   prefect_api_key = var.prefect_api_key
   prefect_api_url = var.prefect_api_url

@@ -86,6 +86,26 @@ resource "aws_iam_role_policy_attachment" "lambda_s3" {
   policy_arn = aws_iam_policy.allow_s3.arn
 }
 
+resource "aws_cloudwatch_event_rule" "predict_daily_rule" {
+  name                = "predict_daily"
+  description         = "rule to trigger prediction lambda every day at 15.00"
+  schedule_expression = var.lambda_schedule
+}
+
+resource "aws_cloudwatch_event_target" "predict_daily_target" {
+  rule      = aws_cloudwatch_event_rule.predict_daily_rule.name
+  target_id = "lambda"
+  arn       = aws_lambda_function.predict_lambda.arn
+}
+
+resource "aws_lambda_permission" "allow_event_to_call_lambda" {
+  statement_id  = "AllowScheduledLambda"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.predict_lambda.function_name
+  principal     = "events.amazonaws.com"
+  source_arn    = aws_cloudwatch_event_rule.predict_daily_rule.arn
+}
+
 resource "aws_lambda_function" "predict_lambda" {
   function_name = var.lambda_function_name
   role          = aws_iam_role.iam_lambda.arn
