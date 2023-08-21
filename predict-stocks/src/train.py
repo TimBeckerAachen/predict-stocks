@@ -7,6 +7,7 @@ from sklearn.metrics import mean_squared_error
 
 from DataFetcher import DataFetcher
 
+
 def preprocess_data(prices: np.array) -> Tuple[np.array, np.array]:
     """
     Preprocesses the data to create feature and target sets.

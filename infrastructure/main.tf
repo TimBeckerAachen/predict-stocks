@@ -36,6 +36,8 @@ module "lambda_function" {
   model_bucket = module.s3_bucket.name
   prefect_api_key = var.prefect_api_key
   prefect_api_url = var.prefect_api_url
+  ticker = var.ticker
+  model_dir = var.model_dir
 }
 
 module "ecr_image" {

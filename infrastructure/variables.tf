@@ -44,3 +44,11 @@ variable "ecr_repo_name" {
 variable "lambda_schedule" {
   description = ""
 }
+
+variable "model_dir" {
+  description = ""
+}
+
+variable "ticker" {
+  description = ""
+}

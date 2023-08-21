@@ -118,6 +118,8 @@ resource "aws_lambda_function" "predict_lambda" {
   environment {
     variables = {
       MODEL_BUCKET = var.model_bucket
+      MODEL_DIR = var.model_dir
+      TICKER = var.ticker
       PREFECT_HOME = "/tmp/.prefect"
       PREFECT_API_KEY = var.prefect_api_key
       PREFECT_API_URL = var.prefect_api_url

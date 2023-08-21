@@ -22,3 +22,11 @@ variable "image_uri" {
 variable "lambda_schedule" {
   description = ""
 }
+
+variable "model_dir" {
+  description = ""
+}
+
+variable "ticker" {
+  description = ""
+}
