@@ -49,10 +49,11 @@ Unfortunately, I did not have time to write a lot of test, but I setup a `ci-tes
 github actions which is running a dummy test if a pull request to main is created.
 
 Here are some screenshot:
+- MLflow
 ![mlflow.png](images%2Fmlflow.png)
-
+- github action workflows
 ![github_actions.png](images%2Fgithub_actions.png)
-
+- AWS lambda function
 ![aws_lambda.png](images%2Faws_lambda.png)
-
+- prefect cloud
 ![prefect.png](images%2Fprefect.png)
